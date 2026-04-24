@@ -1,7 +1,12 @@
-require('dotenv').config();
+import { config } from 'dotenv'; // Cargar el .env
+import { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, SlashCommandBuilder, PermissionFlagsBits, ChannelType, Routes, REST, AttachmentBuilder } from 'discord.js'; // Importando discord.js
+import fs from 'fs'; // Importando fs
+
+config(); // Cargar el .env
+
 const token = process.env.DISCORD_TOKEN;
 
-const noop = () => {};
+const noop = () => {}; // Función vacía para evitar ciertos errores
 
 process.on("unhandledRejection", (err) => {
   console.log("⚠️ Error controlado (Promise):", err?.message);
@@ -30,24 +35,13 @@ console.error = (msg, ...args) => {
   originalError(msg, ...args);
 };
 
-import {
-  Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder,
-  ButtonStyle, StringSelectMenuBuilder, SlashCommandBuilder,
-  PermissionFlagsBits, ChannelType, Routes, REST, AttachmentBuilder
-} from "discord.js";
-import fs from "fs";
-
-const config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
-
-
-
-
 const crearEmbed = () => {
   return new EmbedBuilder()
     .setFooter({ text: "Bot by: Eliann.lua." })
     .setTimestamp();
 };
 
+// Configuración del cliente
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -57,6 +51,9 @@ const client = new Client({
   ]
 });
 
+// Cambiá 'assert' por 'with'
+import configJson from './config.json' with { type: 'json' };
+
 const ticketActivity = new Map();
 const ticketDonacionRespondido = new Map();
 const ticketAutoRespondido = new Map();
@@ -64,8 +61,9 @@ const giveaways = new Map();
 
 const IMG = "https://i.postimg.cc/ZKDfw8vR/5706c124-88ec-4135-9aa2-ad46af9a4cc4.png";
 
+// Verifica si el miembro tiene alguno de los roles de staff
 const hasStaff = (member) =>
-  config.roles_staff?.some(roleId => member.roles.cache.has(roleId));
+  configJson.roles_staff?.some(roleId => member.roles.cache.has(roleId));
 
 const commands = [
   new SlashCommandBuilder()
@@ -128,28 +126,33 @@ const commands = [
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
 ];
 
-const rest = new REST({ version: "10" }).setToken(config.token);
+const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 
-await rest.put(
-  Routes.applicationGuildCommands(config.clientId, config.guildId),
-  { body: commands.map(c => c.toJSON()) }
-);
+try {
+  await rest.put(
+    Routes.applicationGuildCommands(configJson.clientId, configJson.guildId),
+    { body: commands.map(c => c.toJSON()) }
+  );
+  console.log("✅ Comandos registrados correctamente.");
+} catch (error) {
+  console.error("❌ Error al registrar comandos:", error);
+}
 
-console.log("✅ Comandos registrados correctamente.");
-
+// Inicializa el cliente de Discord
 client.once("ready", () => {
   console.log(`✅ Blackline Store iniciado como ${client.user.tag}`);
   client.user.setActivity("Blackline Store | Tickets", { type: 3 });
 });
 
+// Al agregar un nuevo miembro
 client.on("guildMemberAdd", async (member) => {
   try {
-    if (config.rol_noverificado) {
-      await member.roles.add(config.rol_noverificado).catch(() => {});
+    if (configJson.rol_noverificado) {
+      await member.roles.add(configJson.rol_noverificado).catch(() => {});
     }
 
-    if (config.canal_bienvenida) {
-      const canal = member.guild.channels.cache.get(config.canal_bienvenida);
+    if (configJson.canal_bienvenida) {
+      const canal = member.guild.channels.cache.get(configJson.canal_bienvenida);
       if (!canal) return;
 
       const embed = crearEmbed()
@@ -157,7 +160,7 @@ client.on("guildMemberAdd", async (member) => {
         .setTitle("👋 ¡Bienvenido/a a Blackline Store!")
         .setDescription("Nos alegra que te unas a **Blackline Store**.\n\nAntes de empezar, verificáte para acceder al servidor.")
         .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
-        .setImage(config.img_verificacion || IMG)
+        .setImage(configJson.img_verificacion || IMG)
         .setTimestamp();
 
       await canal.send({ content: `🎉 ¡Bienvenido/a ${member}!`, embeds: [embed] });
@@ -165,6 +168,7 @@ client.on("guildMemberAdd", async (member) => {
   } catch {}
 });
 
+// Manejo de interacciones (comandos)
 client.on("interactionCreate", async (interaction) => {
   try {
     if (interaction.isChatInputCommand()) {
@@ -174,12 +178,13 @@ client.on("interactionCreate", async (interaction) => {
         return interaction.reply({ content: "❌ No tenés permiso para usar este comando.", ephemeral: true });
       }
 
+      // Comando de verificación
       if (cmd === "verificacion") {
         const embed = crearEmbed()
           .setColor("#000000")
           .setTitle("🔒 Sistema de Verificación")
           .setDescription("Para acceder a todos los canales, presioná **Verificarme**.")
-          .setImage(config.img_verificacion || IMG);
+          .setImage(configJson.img_verificacion || IMG);
 
         const btn = new ButtonBuilder()
           .setCustomId("boton_verificar")
@@ -190,9 +195,10 @@ client.on("interactionCreate", async (interaction) => {
         return interaction.reply({ embeds: [embed], components: [new ActionRowBuilder().addComponents(btn)] });
       }
 
+      // Comando de sugerencia
       if (cmd === "sugerencia") {
         const texto = interaction.options.getString("texto", true);
-        const canal = interaction.guild.channels.cache.get(config.canal_sugerencias);
+        const canal = interaction.guild.channels.cache.get(configJson.canal_sugerencias);
 
         if (!canal) return interaction.reply({ content: "⚠️ Canal de sugerencias no configurado.", ephemeral: true });
 
@@ -212,6 +218,7 @@ client.on("interactionCreate", async (interaction) => {
         return interaction.reply({ content: "✅ Sugerencia enviada correctamente.", ephemeral: true });
       }
 
+      // Comando para enviar un embed
       if (cmd === "embed") {
         const mensaje = interaction.options.getString("mensaje", true);
         const titulo = interaction.options.getString("titulo");
@@ -437,11 +444,11 @@ if (cmd === "donaciones") {
     }
 
 if (interaction.isButton()) {
-  if (interaction.customId === "boton_verificar") {
-    if (config.rol_noverificado) await interaction.member.roles.remove(config.rol_noverificado).catch(() => {});
-    if (config.rol_verificado) await interaction.member.roles.add(config.rol_verificado).catch(() => {});
+if (interaction.customId === "boton_verificar") {
+    if (configJson.rol_noverificado) await interaction.member.roles.remove(configJson.rol_noverificado).catch(() => {});
+    if (configJson.rol_verificado) await interaction.member.roles.add(configJson.rol_verificado).catch(() => {});
     return interaction.reply({ content: "✅ Verificación completada correctamente.", ephemeral: true });
-  }
+}
 
   const ticketCategorias = {
     ropa_ticket: "ropa",
@@ -455,13 +462,13 @@ if (interaction.isButton()) {
   if (ticketCategorias[interaction.customId]) {
   const categoria = ticketCategorias[interaction.customId];
   
-  const categoriasTickets = {
-    ropa: config.categoria_ropa,
-    boost: config.categoria_boost,
-    partner: config.categoria_partner,
-    bots: config.categoria_bots,
-    streamer: config.categoria_streamer,
-    autos: config.categoria_autos
+const categoriasTickets = {
+    ropa: configJson.categoria_ropa,
+    boost: configJson.categoria_boost,
+    partner: configJson.categoria_partner,
+    bots: configJson.categoria_bots,
+    streamer: configJson.categoria_streamer,
+    autos: configJson.categoria_autos
   };
 
   const user = interaction.user;
@@ -473,20 +480,21 @@ if (interaction.isButton()) {
     return interaction.reply({ content: `⚠️ Ya tenés un ticket abierto: <#${existente.id}>`, ephemeral: true });
   }
 
-  const canal = await interaction.guild.channels.create({
-    name,
-    type: ChannelType.GuildText,
-    parent: categoriasTickets[categoria],
-    topic: `USER:${user.id}`,
-    permissionOverwrites: [
-      { id: interaction.guild.roles.everyone, deny: [PermissionFlagsBits.ViewChannel] },
-      { id: user.id, allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.AttachFiles, PermissionFlagsBits.ReadMessageHistory] },
-      ...config.roles_staff.map(r => ({
-        id: r,
-        allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
-      }))
-    ]
-  });
+const canal = await interaction.guild.channels.create({
+  name,
+  type: ChannelType.GuildText,
+  parent: categoriasTickets[categoria],
+  topic: `USER:${user.id}`,
+  permissionOverwrites: [
+    { id: interaction.guild.roles.everyone, deny: [PermissionFlagsBits.ViewChannel] },
+    { id: user.id, allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.AttachFiles, PermissionFlagsBits.ReadMessageHistory] },
+    // CAMBIO AQUÍ: Usar configJson en lugar de config
+...configJson.roles_staff.map(r => ({
+      id: r,
+      allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+    }))
+  ]
+});
 
   ticketActivity.set(canal.id, { lastActivity: Date.now(), warned: false, userId: user.id });
 
@@ -505,11 +513,11 @@ if (interaction.isButton()) {
     new ButtonBuilder().setCustomId("notificar_usuario").setLabel("Notificar Usuario").setEmoji("📢").setStyle(ButtonStyle.Secondary)
   );
 
-  await canal.send({
-    content: `${user} ${config.roles_staff.map(r => `<@&${r}>`).join(" ")}`,
-    embeds: [embed],
-    components: [botones]
-  });
+await canal.send({
+  content: `${user} ${configJson.roles_staff.map(r => `<@&${r}>`).join(" ")}`,
+  embeds: [embed],
+  components: [botones]
+});
 
   // **Usamos `interaction.reply()` para responder con el mensaje efímero**
   return interaction.reply({ content: `✅ Ticket creado en <#${canal.id}>.`, ephemeral: true });
@@ -528,7 +536,8 @@ if (interaction.isButton()) {
     const fileName = `./transcript_${interaction.channel.id}.txt`;
     fs.writeFileSync(fileName, transcript || "Ticket vacío.");
 
-    const canalLogs = interaction.guild.channels.cache.get(config.logs_tickets_channel);
+// Cambiado config por configJson
+    const canalLogs = interaction.guild.channels.cache.get(configJson.logs_tickets_channel);
     if (canalLogs) {
       await canalLogs.send({
         embeds: [
@@ -700,4 +709,4 @@ setInterval(async () => {
   }
 }, 5 * 60 * 1000);
 
-client.login(config.token);
+client.login(process.env.DISCORD_TOKEN);
