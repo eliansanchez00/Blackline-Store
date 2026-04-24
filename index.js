@@ -1,4 +1,7 @@
-// ======================= ANTI CRASH =======================
+require('dotenv').config();
+
+const token = process.env.DISCORD_TOKEN;
+
 const noop = () => {};
 
 process.on("unhandledRejection", (err) => {
@@ -36,6 +39,8 @@ import {
 import fs from "fs";
 
 const config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+
+
 
 
 const crearEmbed = () => {
