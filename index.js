@@ -118,12 +118,7 @@ const commands = [
     .setDescription("Crear sorteo")
     .addStringOption(o => o.setName("premio").setDescription("Premio").setRequired(true))
     .addIntegerOption(o => o.setName("ganadores").setDescription("Cantidad de ganadores").setRequired(true))
-    .addIntegerOption(o => o.setName("minutos").setDescription("Duración en minutos").setRequired(true)),
-
-  new SlashCommandBuilder()
-    .setName("verificacion")
-    .setDescription("Enviar panel de verificación")
-    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+    .addIntegerOption(o => o.setName("minutos").setDescription("Duración en minutos").setRequired(true))
 ];
 
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
@@ -145,28 +140,6 @@ client.once("ready", () => {
 });
 
 // Al agregar un nuevo miembro
-client.on("guildMemberAdd", async (member) => {
-  try {
-    if (configJson.rol_noverificado) {
-      await member.roles.add(configJson.rol_noverificado).catch(() => {});
-    }
-
-    if (configJson.canal_bienvenida) {
-      const canal = member.guild.channels.cache.get(configJson.canal_bienvenida);
-      if (!canal) return;
-
-      const embed = crearEmbed()
-        .setColor("#000000")
-        .setTitle("👋 ¡Bienvenido/a a Blackline Store!")
-        .setDescription("Nos alegra que te unas a **Blackline Store**.\n\nAntes de empezar, verificáte para acceder al servidor.")
-        .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
-        .setImage(configJson.img_verificacion || IMG)
-        .setTimestamp();
-
-      await canal.send({ content: `🎉 ¡Bienvenido/a ${member}!`, embeds: [embed] });
-    }
-  } catch {}
-});
 
 // Manejo de interacciones (comandos)
 client.on("interactionCreate", async (interaction) => {
@@ -174,25 +147,8 @@ client.on("interactionCreate", async (interaction) => {
     if (interaction.isChatInputCommand()) {
       const cmd = interaction.commandName;
 
-      if (!["sugerencia", "verificacion", "ticketpanel"].includes(cmd) && !hasStaff(interaction.member)) {
+      if (!["sugerencia", "ticketpanel"].includes(cmd) && !hasStaff(interaction.member)) {
         return interaction.reply({ content: "❌ No tenés permiso para usar este comando.", ephemeral: true });
-      }
-
-      // Comando de verificación
-      if (cmd === "verificacion") {
-        const embed = crearEmbed()
-          .setColor("#000000")
-          .setTitle("🔒 Sistema de Verificación")
-          .setDescription("Para acceder a todos los canales, presioná **Verificarme**.")
-          .setImage(configJson.img_verificacion || IMG);
-
-        const btn = new ButtonBuilder()
-          .setCustomId("boton_verificar")
-          .setLabel("Verificarme")
-          .setEmoji("✅")
-          .setStyle(ButtonStyle.Success);
-
-        return interaction.reply({ embeds: [embed], components: [new ActionRowBuilder().addComponents(btn)] });
       }
 
       // Comando de sugerencia
