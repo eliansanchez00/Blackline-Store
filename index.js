@@ -555,14 +555,15 @@ await canal.send({
 }
 
 if (interaction.isStringSelectMenu()) {
-  if (interaction.customId === "donaciones_select") {
-    const opcion = interaction.values[0];
+    if (interaction.customId === "donaciones_select") {
+      const opcion = interaction.values[0];
 
-    if (opcion === "ropa") {
-      const embed = crearEmbed()
-        .setTitle("👕 ROPA PERSONALIZADA")
-        .setDescription(
-`👕 Remera — $10.000 ARS / $8 USD  
+      // --- OPCIÓN ROPA ---
+      if (opcion === "ropa") {
+        const embed = crearEmbed()
+          .setTitle("👕 ROPA PERSONALIZADA")
+          .setDescription(
+            `👕 Remera — $10.000 ARS / $8 USD  
 👖 Pantalón — $10.000 ARS / $8 USD  
 🦺 Chaleco — $10.000 ARS / $8 USD  
 
@@ -576,16 +577,17 @@ if (interaction.isStringSelectMenu()) {
 Iluminación → $5.000  
 Cambios → $3.000  
 Género extra → $5.000`
-        );
+          );
 
-      return interaction.reply({ embeds: [embed] }); // Sin ephemeral: true
-    }
+        return interaction.reply({ embeds: [embed] });
+      }
 
-    if (opcion === "autos") {
-      const embed = crearEmbed()
-        .setTitle("🚗 MODIFICACIONES DE AUTOS")
-        .setDescription(
-`⚙️ Handlings — $15.000  
+      // --- OPCIÓN AUTOS ---
+      if (opcion === "autos") {
+        const embed = crearEmbed()
+          .setTitle("🚗 MODIFICACIONES DE AUTOS")
+          .setDescription(
+            `⚙️ Handlings — $15.000  
 🚀 Handling volador — $15.000  
 
 🛡️ Blindaje común — $22.000  
@@ -596,10 +598,92 @@ Género extra → $5.000`
 🎨 Calcomanías — $13.000  
 🌈 Luces RGB — $15.000  
 🛞 Rampas — $18.000`
-        );
+          );
 
-      return interaction.reply({ embeds: [embed] }); // Sin ephemeral: true
-    }
+        return interaction.reply({ embeds: [embed] });
+      }
+
+      // --- OPCIÓN BOTS (NUEVA) ---
+      if (opcion === "donacion_bots") {
+        const textoBots = `🚀 **BLACKLINE STORE | BOTS PERSONALIZADOS PARA DISCORD** 🤖✨
+
+¿Querés llevar tu servidor al siguiente nivel? 👀
+Creamos bots totalmente **a medida**, adaptados a lo que necesites 💻🔥
+
+━━━━━━━━━━━━━━━━━━
+💎 **PLANES DISPONIBLES** 💎
+━━━━━━━━━━━━━━━━━━
+
+🔹 **📦 PLAN BÁSICO**
+💰 Cliente normal:
+• Mensual: $8.000
+• Trimestral: $18.000 (único pago cada tres meses)
+
+🌟 Cliente VIP:
+• Mensual: $6.000
+• Trimestral: $14.000 (único pago cada tres meses)
+
+✅ Funciones personalizadas
+✅ Bot listo para usar
+✅ Soporte ante errores o fallas
+
+💡 Ideal si buscás algo funcional, estable y efectivo
+
+━━━━━━━━━━━━━━━━━━
+
+🔸 **⚡ PLAN AVANZADO (RECOMENDADO)**
+💰 Cliente normal:
+• Mensual: $10.000
+• Trimestral: $24.000 (único pago cada tres meses)
+
+🌟 Cliente VIP:
+• Mensual: $7.000
+• Trimestral: $19.000 (único pago cada tres meses)
+
+🔥 Todo lo del plan básico +
+🔄 Modificaciones cuando quieras
+➕ Nuevas funciones en cualquier momento
+🛠️ Soporte prioritario
+
+💡 Ideal si querés un bot en constante evolución
+
+━━━━━━━━━━━━━━━━━━
+🧠 **¿QUÉ PODEMOS HACER?**
+━━━━━━━━━━━━━━━━━━
+
+🔹 Fichajes (PFA, SAME, facciones, etc.)
+🔹 Logs completos (mensajes, voz, acciones)
+🔹 Sistemas para mafias (alertas, resúmenes, movimientos)
+🔹 Anuncios automáticos (Twitch, Kick, streams) 🎥
+🔹 Bienvenida / despedida 👋
+🔹 Facturación y gestión 💰
+🔹 Moderación automática ⚖️
+🔹 Tickets / soporte 📩
+🔹 Economía / recompensas 🎮
+🔹 Roles automáticos 🎭
+
+✨ Y mucho más… lo que imagines, lo hacemos realidad ✨
+
+━━━━━━━━━━━━━━━━━━
+
+📩 **Consultas o pedidos: VÍA TICKET!**
+
+━━━━━━━━━━━━━━━━━━
+
+⚡ **BLACKLINE STORE** ⚡`;
+
+        return interaction.reply({
+          content: "@everyone",
+          embeds: [
+            crearEmbed()
+              .setColor("#5865F2")
+              .setDescription(textoBots)
+              .setImage(IMG)
+          ],
+          ephemeral: false
+        });
+      }
+
 
       }
 
