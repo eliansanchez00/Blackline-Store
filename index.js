@@ -537,14 +537,15 @@ await canal.send({
 }
 
 if (interaction.isStringSelectMenu()) {
-  if (interaction.customId === "donaciones_select") {
-    const opcion = interaction.values[0];
+    if (interaction.customId === "donaciones_select") {
+      const opcion = interaction.values[0]; // Usaremos siempre 'opcion'
 
-    if (opcion === "ropa") {
-      const embed = crearEmbed()
-        .setTitle("👕 ROPA PERSONALIZADA")
-        .setDescription(
-`👕 Remera — $10.000 ARS / $8 USD  
+      // --- OPCIÓN ROPA ---
+      if (opcion === "ropa") {
+        const embed = crearEmbed()
+          .setTitle("👕 ROPA PERSONALIZADA")
+          .setDescription(
+            `👕 Remera — $10.000 ARS / $8 USD  
 👖 Pantalón — $10.000 ARS / $8 USD  
 🦺 Chaleco — $10.000 ARS / $8 USD  
 
@@ -558,16 +559,16 @@ if (interaction.isStringSelectMenu()) {
 Iluminación → $5.000  
 Cambios → $3.000  
 Género extra → $5.000`
-        );
+          );
+        return interaction.reply({ embeds: [embed] });
+      }
 
-      return interaction.reply({ embeds: [embed] }); // Sin ephemeral: true
-    }
-
-    if (opcion === "autos") {
-      const embed = crearEmbed()
-        .setTitle("🚗 MODIFICACIONES DE AUTOS")
-        .setDescription(
-`⚙️ Handlings — $15.000  
+      // --- OPCIÓN AUTOS ---
+      if (opcion === "autos") {
+        const embed = crearEmbed()
+          .setTitle("🚗 MODIFICACIONES DE AUTOS")
+          .setDescription(
+            `⚙️ Handlings — $15.000  
 🚀 Handling volador — $15.000  
 
 🛡️ Blindaje común — $22.000  
@@ -578,14 +579,13 @@ Género extra → $5.000`
 🎨 Calcomanías — $13.000  
 🌈 Luces RGB — $15.000  
 🛞 Rampas — $18.000`
-        );
+          );
+        return interaction.reply({ embeds: [embed] });
+      }
 
-      return interaction.reply({ embeds: [embed] }); // Sin ephemeral: true
-    }
-
-    // AGREGÁ ESTO DEBAJO DE LAS OTRAS OPCIONES DE DONACIÓN:
-if (valor === "donacion_bots") {
-  const textoBots = `🚀 **BLACKLINE STORE | BOTS PERSONALIZADOS PARA DISCORD** 🤖✨
+      // --- OPCIÓN BOTS (CORREGIDA) ---
+      if (opcion === "donacion_bots") {
+        const textoBots = `🚀 **BLACKLINE STORE | BOTS PERSONALIZADOS PARA DISCORD** 🤖✨
 
 ¿Querés llevar tu servidor al siguiente nivel? 👀
 Creamos bots totalmente **a medida**, adaptados a lo que necesites 💻🔥
@@ -652,17 +652,18 @@ Creamos bots totalmente **a medida**, adaptados a lo que necesites 💻🔥
 
 ⚡ **BLACKLINE STORE** ⚡`;
 
-  return interaction.reply({
-    content: "@everyone",
-    embeds: [
-      crearEmbed()
-        .setColor("#5865F2")
-        .setDescription(textoBots)
-        .setImage(IMG)
-    ],
-    ephemeral: false
-  });
-}
+        return interaction.reply({
+          content: "@everyone",
+          embeds: [
+            crearEmbed()
+              .setColor("#5865F2")
+              .setDescription(textoBots)
+              .setImage(IMG)
+          ],
+          ephemeral: false
+        });
+      }
+    
 
       }
 
