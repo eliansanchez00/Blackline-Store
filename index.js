@@ -577,7 +577,8 @@ if (interaction.isStringSelectMenu()) {
 Iluminación → $5.000  
 Cambios → $3.000  
 Género extra → $5.000`
-          );
+          )
+          .setImage(IMG);
 
         return interaction.reply({ embeds: [embed] });
       }
@@ -598,8 +599,8 @@ Género extra → $5.000`
 🎨 Calcomanías — $13.000  
 🌈 Luces RGB — $15.000  
 🛞 Rampas — $18.000`
-          );
-
+          )
+        .setImage(IMG);
         return interaction.reply({ embeds: [embed] });
       }
 
