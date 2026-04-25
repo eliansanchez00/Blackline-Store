@@ -666,10 +666,6 @@ Creamos bots totalmente **a medida**, adaptados a lo que necesites 💻🔥
 
 ━━━━━━━━━━━━━━━━━━
 
-📩 **Consultas o pedidos: VÍA TICKET!**
-
-━━━━━━━━━━━━━━━━━━
-
 ⚡ **BLACKLINE STORE** ⚡`;
 
         return interaction.reply({
