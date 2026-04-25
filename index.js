@@ -196,6 +196,7 @@ if (cmd === "ticketpanel") {
   const embed = crearEmbed()
     .setColor("#2b2d31")
     .setTitle("🎫 Blackline Store | Tickets")
+    .setImage(IMG)
     .setDescription("Seleccioná una categoría para abrir un ticket:\n\n⚡ **Ropa**\n💜 **Boost**\n🤝 **Partner**\n🤖 **Bots**\n🎥 **Streamer**\n🚗 **Autos**");
 
   // Fila 1 con 5 botones
@@ -245,6 +246,7 @@ if (cmd === "metodos") {
   const embed = crearEmbed()
     .setColor("#000000")
     .setTitle("💳 BLACKLINE STORE | MÉTODOS DE PAGO")
+    .setImage(IMG)
     .setDescription(
 `━━━━━━━━━━━━━━━━━━
 💸 **MERCADO PAGO**
@@ -275,6 +277,7 @@ if (cmd === "donaciones") {
   const menu = new StringSelectMenuBuilder()
     .setCustomId("donaciones_select")
     .setPlaceholder("Elegí una categoría...")
+    .setImage(IMG)
     .addOptions([
       {
         label: "Ropa",
@@ -346,6 +349,7 @@ if (cmd === "donaciones") {
           .setColor("#39FF14")
           .setTitle("✨ NUEVO SORTEO ✨")
           .setDescription("¡Hacé clic en el botón para participar!")
+          .setImage(IMG)
           .addFields(
             { name: "🎁 Premio", value: premio, inline: true },
             { name: "🏆 Ganadores", value: `${ganadores}`, inline: true },
@@ -691,7 +695,7 @@ Creamos bots totalmente **a medida**, adaptados a lo que necesites 💻🔥
           paypal: "💲 **PayPal**\nEmail: **CONFIGURAR_PAYPAL**",
           crypto: "🪙 **Cripto**\nWallet: **CONFIGURAR_WALLET**"
         };
-
+      
         return interaction.reply({ content: datos[interaction.values[0]], ephemeral: true });
       }
     }
