@@ -183,6 +183,7 @@ client.on("interactionCreate", async (interaction) => {
         const embed = crearEmbed()
           .setColor("#ff0000")
           .setDescription(mensaje)
+          .setImage(IMG)
           .setFooter({ text: `Bot by: Eliann.lua. | Publicado por ${interaction.user.tag}` })
           .setTimestamp();
 
