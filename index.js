@@ -59,7 +59,7 @@ const ticketDonacionRespondido = new Map();
 const ticketAutoRespondido = new Map();
 const giveaways = new Map();
 
-const IMG = "https://i.postimg.cc/ZKDfw8vR/5706c124-88ec-4135-9aa2-ad46af9a4cc4.png";
+const IMG = "https://i.postimg.cc/Hx50gSWf/F9F37C29-1F1A-4353-B1A7-DF8FA7CB2445.png";
 
 // Verifica si el miembro tiene alguno de los roles de staff
 const hasStaff = (member) =>
