@@ -37,7 +37,7 @@ console.error = (msg, ...args) => {
 
 const crearEmbed = () => {
   return new EmbedBuilder()
-    .setFooter({ text: "Bot by: Eliann.lua." })
+    .setFooter({ text: "Bot by: Eliann.lua. | Todos los derechos reservados." })
     .setTimestamp();
 };
 
@@ -184,7 +184,7 @@ client.on("interactionCreate", async (interaction) => {
           .setColor("#ff0000")
           .setDescription(mensaje)
           .setImage(IMG)
-          .setFooter({ text: `Bot by: Eliann.lua. | Publicado por ${interaction.user.tag}` })
+          .setFooter({ text: `Bot by: Eliann.lua. | Todos los derechos reservados. | Publicado por ${interaction.user.tag}` })
           .setTimestamp();
 
         if (titulo) embed.setTitle(`📢 ${titulo.toUpperCase()} 📢`);
@@ -357,7 +357,7 @@ if (cmd === "donaciones") {
             { name: "⏳ Finaliza", value: `<t:${fin}:R>`, inline: true },
             { name: "👥 Participantes", value: "0", inline: true }
           )
-          .setFooter({ text: `Bot by: Eliann.lua. | Iniciado por ${interaction.user.username}` });
+          .setFooter({ text: `Bot by: Eliann.lua. | Todos los derechos reservados. | Iniciado por ${interaction.user.username}` });
 
         const btn = new ButtonBuilder()
           .setCustomId("join_giveaway")
@@ -401,7 +401,7 @@ if (cmd === "donaciones") {
             .setColor("#FF4747")
             .setTitle("🎉 ¡SORTEO FINALIZADO! 🎉")
             .setDescription(`Ganadores:\n${winners.map(w => `<@${w}>`).join("\n")}`)
-            .setFooter({ text: `Bot by: Eliann.lua. | Sorteo de ${premio}` });
+            .setFooter({ text: `Bot by: Eliann.lua. | Todos los derechos reservados. | Sorteo de ${premio}` });
 
           const reroll = new ButtonBuilder()
             .setCustomId(`reroll_${msg.id}`)
