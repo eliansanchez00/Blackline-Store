@@ -457,13 +457,25 @@ const canal = await interaction.guild.channels.create({
   parent: categoriasTickets[categoria],
   topic: `USER:${user.id}`,
   permissionOverwrites: [
-    { id: interaction.guild.roles.everyone, deny: [PermissionFlagsBits.ViewChannel] },
-    { id: user.id, allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.AttachFiles, PermissionFlagsBits.ReadMessageHistory] },
-    // CAMBIO AQUÍ: Usar configJson en lugar de config
-...configJson.roles_staff.map(r => ({
-      id: r,
-      allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
-    }))
+    { 
+      id: interaction.guild.roles.everyone, 
+      deny: [PermissionFlagsBits.ViewChannel] 
+    },
+    { 
+      id: user.id, 
+      allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.AttachFiles, PermissionFlagsBits.ReadMessageHistory] 
+    },
+    ...configJson.roles_staff.map(roleId => {
+      const role = interaction.guild.roles.cache.get(roleId);
+      if (!role) {
+        console.error(`El rol con ID ${roleId} no está en la caché.`);
+        return null; // Si el rol no está en caché, lo ignoramos
+      }
+      return {
+        id: role.id,
+        allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+      };
+    }).filter(Boolean) // Filtra roles nulos (si no están en la caché)
   ]
 });
 
