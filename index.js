@@ -274,7 +274,7 @@ if (cmd === "donaciones") {
     .setColor("#000000")
     .setTitle("🎁 BLACKLINE STORE | DONACIONES")
         .setImage(IMG)
-    .setDescription("Seleccioná una categoría para ver los productos:");
+    .setDescription("**¡Gracias por elegirnos!** \n\nEn **Blackline Store**, ofrecemos productos de alta calidad a precios accesibles. Nos especializamos en crear soluciones a medida para **GTA 5** y **FiveM**, con un enfoque en el profesionalismo y la satisfacción de nuestros clientes. Aquí podrás encontrar opciones personalizadas que mejor se adapten a tus necesidades. 🚗✨");
 
   const menu = new StringSelectMenuBuilder()
     .setCustomId("donaciones_select")
