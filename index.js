@@ -273,12 +273,12 @@ if (cmd === "donaciones") {
   const embed = crearEmbed()
     .setColor("#000000")
     .setTitle("🎁 BLACKLINE STORE | DONACIONES")
+        .setImage(IMG)
     .setDescription("Seleccioná una categoría para ver los productos:");
 
   const menu = new StringSelectMenuBuilder()
     .setCustomId("donaciones_select")
     .setPlaceholder("Elegí una categoría...")
-    .setImage(IMG)
     .addOptions([
       {
         label: "Ropa",
