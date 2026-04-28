@@ -71,6 +71,11 @@ const commands = [
     .setDescription("Enviar panel de tickets")
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
+      new SlashCommandBuilder()
+    .setName("cerrarticket")
+    .setDescription("Cerrar el ticket actual")
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
+
   new SlashCommandBuilder()
     .setName("sugerencia")
     .setDescription("Crear una sugerencia")
@@ -172,6 +177,42 @@ client.on("interactionCreate", async (interaction) => {
         await msg.react("❌");
 
         return interaction.reply({ content: "✅ Sugerencia enviada correctamente.", ephemeral: true });
+      }
+
+            if (cmd === "cerrarticket") {
+        if (!hasStaff(interaction.member)) {
+          return interaction.reply({ content: "❌ No tenés permiso.", ephemeral: true });
+        }
+
+        if (!interaction.channel.name?.startsWith("ticket-")) {
+          return interaction.reply({ content: "❌ Este comando solo se puede usar dentro de un ticket.", ephemeral: true });
+        }
+
+        await interaction.reply("🗑️ Generando transcript y cerrando ticket...");
+
+        const messages = await interaction.channel.messages.fetch({ limit: 100 });
+        const transcript = messages.reverse().map(m =>
+          `[${new Date(m.createdTimestamp).toLocaleString("es-AR")}] ${m.author.tag}: ${m.content || "[Sin texto]"}`
+        ).join("\n");
+
+        const fileName = `./transcript_${interaction.channel.id}.txt`;
+        fs.writeFileSync(fileName, transcript || "Ticket vacío.");
+
+        const canalLogs = interaction.guild.channels.cache.get(configJson.logs_tickets_channel);
+        if (canalLogs) {
+          await canalLogs.send({
+            embeds: [
+              crearEmbed()
+                .setColor("#3498db")
+                .setTitle("🧾 Transcript del Ticket")
+                .setDescription(`**Canal:** ${interaction.channel.name}\n**Cerrado por:** ${interaction.user}`)
+            ],
+            files: [new AttachmentBuilder(fileName)]
+          });
+        }
+
+        fs.unlinkSync(fileName);
+        return interaction.channel.delete().catch(() => {});
       }
 
       // Comando para enviar un embed
@@ -748,29 +789,5 @@ client.on("messageCreate", async (msg) => {
     }
   }
 });
-
-setInterval(async () => {
-  const ahora = Date.now();
-  const DOCE_HORAS = 12 * 60 * 60 * 1000;
-
-  for (const [channelId, data] of ticketActivity.entries()) {
-    const channel = await client.channels.fetch(channelId).catch(() => null);
-    if (!channel) {
-      ticketActivity.delete(channelId);
-      continue;
-    }
-
-    if (!data.warned && ahora - data.lastActivity >= DOCE_HORAS) {
-      await channel.send(`⏳ <@${data.userId}> pasaron **12 horas sin actividad**. Respondé si todavía necesitás ayuda.`);
-      ticketActivity.set(channelId, { ...data, warned: true });
-    }
-
-    if (data.warned && ahora - data.lastActivity >= DOCE_HORAS * 2) {
-      await channel.send("🔒 Ticket cerrado automáticamente por inactividad.");
-      await channel.delete().catch(() => {});
-      ticketActivity.delete(channelId);
-    }
-  }
-}, 5 * 60 * 1000);
 
 client.login(process.env.DISCORD_TOKEN);
